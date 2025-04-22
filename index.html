@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IOT NPTEL WEEK-10</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: 1px solid #e5e5e5;
+        }
+
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #333;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            padding: 12px;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .option:hover {
+            background-color: #f8f8f8;
+        }
+
+        .option.selected {
+            border-color: #3b82f6;
+        }
+
+        .option.correct {
+            background-color: #ecfdf5;
+        }
+
+        .option.wrong {
+            background-color: #fef2f2;
+        }
+
+        .option input[type="radio"] {
+            margin-right: 12px;
+        }
+
+        .feedback {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #e5e5e5;
+            display: none;
+        }
+
+        .feedback.visible {
+            display: block;
+        }
+
+        .result-icon {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .result-icon.correct {
+            color: #059669;
+        }
+
+        .result-icon.wrong {
+            color: #dc2626;
+        }
+
+        .explanation {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 24px;
+        }
+
+        .score {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .button {
+            background-color: #3b82f6;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.2s;
+        }
+
+        .button:hover {
+            background-color: #2563eb;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>IOT NPTEL WEEK-10</h1>
+        <div id="quiz-container"></div>
+        <div class="controls">
+            <div id="score" class="score"></div>
+            <button id="submit-btn" class="button">Submit Answers</button>
+        </div>
+    </div>
+
+    <script>
+const questions= [
+  {
+    id: 1,
+    question: "Which among the following are active connected entities in a holistic smart city environment?",
+    options: ["Police station", "Banks", "Transport centers", "All of the above"],
+    correctAnswer: 3,
+    explanation: "All of the above are active connected entities in a smart city. Lecture 46@4:45."
+  },
+  {
+    id: 2,
+    question: "With the help of ICT tools, it is possible to increase and improve citizen participation for a good governance-based smart city.",
+    options: ["True", "False"],
+    correctAnswer: 0,
+    explanation: "True. ICT tools can improve citizen participation. Lecture 46@11:20."
+  },
+  {
+    id: 3,
+    question: "Which among the following is a possible challenge with respect to smart parking lots?",
+    options: ["Efficient auto-routing of vehicles", "Locating current vacant spots", "Auto-charging of vehicles", "All of the given"],
+    correctAnswer: 3,
+    explanation: "All options are challenges in smart parking. Lecture 46@24:37."
+  },
+  {
+    id: 4,
+    question: "What refers to combining information from multiple sensor sources?",
+    options: ["Information Collection", "Multi-sensor deployment", "Multi-sensor dissemination", "Multi-sensor data fusion"],
+    correctAnswer: 3,
+    explanation: "Multi-sensor data fusion combines information from multiple sources. Lecture 47@6:52."
+  },
+  {
+    id: 5,
+    question: "Which of the following is one of the theory of evidence-based mathematical methods of data fusion?",
+    options: ["Belief function", "Bayesian analysis", "ANN", "None of these"],
+    correctAnswer: 0,
+    explanation: "Belief function is one of the theories of data fusion. Lecture 47@11:49."
+  },
+  {
+    id: 6,
+    question: "With respect to data fusion from multiple IoT sensors, does outlier data present with a challenge?",
+    options: ["No", "Yes"],
+    correctAnswer: 1,
+    explanation: "Outlier data can present challenges in data fusion. Lecture 47@8:13."
+  },
+  {
+    id: 7,
+    question: "Which of the following is a phase of ICV development?",
+    options: ["Based on 2G", "Based on 4G LTE", "Vehicles connected to cloud", "All of these"],
+    correctAnswer: 3,
+    explanation: "ICV development phases include 2G, 4G LTE, and cloud connection. Lecture 50@12:28."
+  },
+  {
+    id: 8,
+    question: "With which of the following can the decision-making gap between the sensors and the actuators be bridged?",
+    options: ["SDN", "OpenStack Horizon", "Artificial Intelligence (AI)", "Arduino IDE"],
+    correctAnswer: 2,
+    explanation: "AI helps bridge the decision-making gap. Lecture 47@12:14."
+  },
+  {
+    id: 9,
+    question: "Which of the following statements are true about the HAN standards?",
+    options: [
+      "Statements I and II",
+      "Statements I and III",
+      "Statements II and III",
+      "Statements I, II and III"
+    ],
+    correctAnswer: 0,
+    explanation: "Statements I and II are true. Lecture 48@16:11."
+  },
+  {
+    id: 10,
+    question: "What is UPnP?",
+    options: [
+      "Uninterrupted Post-messaging",
+      "Universal Pull Streaming",
+      "Universal Plug and Play",
+      "Unhindered Public Networking"
+    ],
+    correctAnswer: 2,
+    explanation: "UPnP stands for Universal Plug and Play. Lecture 48@12:53."
+  },
+  {
+    id: 11,
+    question: "What are the disadvantages of V2X communication?",
+    options: ["Increased traffic safety", "Tracking of movement", "Efficient use of fuel", "None of these"],
+    correctAnswer: 1,
+    explanation: "Tracking of movement is a disadvantage in V2X. Lecture 50@21:04."
+  },
+  {
+    id: 12,
+    question: "Mobility of vehicles in a V2X environment limits which of the following that restricts the use of TCP/IP for V2X communication?",
+    options: [
+      "Communication between vehicular infrastructure",
+      "Localization of data",
+      "Backbone routing in IP core networks",
+      "Human-vehicle interaction"
+    ],
+    correctAnswer: 1,
+    explanation: "V2X's mobility limits TCP/IP use due to data localization. Lecture 49@12:33."
+  },
+  {
+    id: 13,
+    question: "In VANET, link durations are long and easily scaled-up to include all the vehicles on the road?",
+    options: ["True", "False"],
+    correctAnswer: 1,
+    explanation: "Link durations are short due to the dynamic nature of VANETs. Lecture 49@18:00."
+  },
+  {
+    id: 14,
+    question: "CCN is derived from ICN architecture.",
+    options: ["True", "False"],
+    correctAnswer: 0,
+    explanation: "CCN is derived from ICN. Lecture 49@15:32."
+  },
+  {
+    id: 15,
+    question: "In an ICV environment, efficient cooperation between different vehicles on a highway can lead to a safer scenario with respect to collision and avoiding incoming traffic.",
+    options: ["True", "False"],
+    correctAnswer: 0,
+    explanation: "Efficient cooperation improves safety in ICV. Lecture 50@2:00."
+  }
+];
+
+
+
+        let selectedAnswers = {};
+        let submitted = false;
+
+        function createQuiz() {
+            const quizContainer = document.getElementById('quiz-container');
+            
+            questions.forEach(question => {
+                const questionCard = document.createElement('div');
+                questionCard.className = 'question-card';
+                
+                questionCard.innerHTML = `
+                    <div class="question-text">Q${question.id}. ${question.question}</div>
+                    <div class="options-container">
+                        ${question.options.map((option, index) => `
+                            <label class="option" data-question="${question.id}" data-option="${index}">
+                                <input type="radio" name="question${question.id}" value="${index}">
+                                ${option}
+                            </label>
+                        `).join('')}
+                    </div>
+                    <div class="feedback" id="feedback-${question.id}">
+                        <div class="result-icon">
+                            <span class="icon"></span>
+                            <span class="result-text"></span>
+                        </div>
+                        <div class="explanation">${question.explanation}</div>
+                    </div>
+                `;
+                
+                quizContainer.appendChild(questionCard);
+            });
+
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', handleOptionSelect);
+            });
+
+            document.getElementById('submit-btn').addEventListener('click', handleSubmit);
+        }
+
+        function handleOptionSelect(event) {
+            if (submitted) return;
+
+            const questionId = parseInt(event.currentTarget.dataset.question);
+            const optionIndex = parseInt(event.currentTarget.dataset.option);
+
+            selectedAnswers[questionId] = optionIndex;
+
+            const questionOptions = document.querySelectorAll(`.option[data-question="${questionId}"]`);
+            questionOptions.forEach(option => {
+                option.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+
+            const radioButton = event.currentTarget.querySelector('input[type="radio"]');
+            radioButton.checked = true;
+        }
+
+        function handleSubmit() {
+            if (Object.keys(selectedAnswers).length < questions.length) {
+                alert("Please answer all questions before submitting!");
+                return;
+            }
+
+            submitted = true;
+            let score = 0;
+
+            questions.forEach(question => {
+                const isCorrect = selectedAnswers[question.id] === question.correctAnswer;
+                if (isCorrect) score++;
+
+                const feedback = document.getElementById(`feedback-${question.id}`);
+                feedback.classList.add('visible');
+
+                const resultIcon = feedback.querySelector('.result-icon');
+                const resultText = feedback.querySelector('.result-text');
+                
+                if (isCorrect) {
+                    resultIcon.classList.add('correct');
+                    resultText.textContent = 'Correct Answer +1';
+                } else {
+                    resultIcon.classList.add('wrong');
+                    resultText.textContent = 'Wrong Answer +0';
+                }
+
+                const options = document.querySelectorAll(`.option[data-question="${question.id}"]`);
+                options.forEach((option, index) => {
+                    if (index === question.correctAnswer) {
+                        option.classList.add('correct');
+                    } else if (index === selectedAnswers[question.id]) {
+                        option.classList.add('wrong');
+                    }
+                });
+            });
+
+            document.getElementById('score').textContent = `Score: ${score}/${questions.length}`;
+
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.textContent = 'Try Again';
+            submitBtn.removeEventListener('click', handleSubmit);
+            submitBtn.addEventListener('click', resetQuiz);
+        }
+
+        function resetQuiz() {
+            location.reload();
+        }
+
+        createQuiz();
+    </script>
+</body>
+</html>
